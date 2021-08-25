@@ -4,11 +4,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Meaning(
+data class MeaningResponse(
     @SerialName("id") val id: String,
     @SerialName("wordId") val wordId: Int,
     @SerialName("difficultyLevel") val difficultyLevel: Int,
-    @SerialName("partOfSpeechCode") val partOfSpeech: PartOfSpeech,
+    @SerialName("partOfSpeechCode") val partOfSpeechCode: String,
     @SerialName("prefix") val prefix: String? = null,
     @SerialName("text") val text: String,
     @SerialName("soundUrl") val soundUrl: String? = null,
@@ -20,6 +20,12 @@ data class Meaning(
     @SerialName("definition") val definition: Definition? = null,
     @SerialName("examples") val examples: List<Definition> = emptyList()
 ) {
+
+    @Serializable
+    data class Translation(
+        @SerialName("text") val text: String,
+        @SerialName("note") val note: String? = null
+    )
 
     @Serializable
     data class Image(
