@@ -90,7 +90,7 @@ class DictionaryRepositoryImpl(private val dictionaryApi: DictionaryApi, private
                 transcription = transcription,
                 updatedAt = updatedAt,
                 mnemonics = mnemonics,
-                translation = Translation(translation.text, translation.note),
+                translation = Translation(translation!!.text, translation!!.note),
                 imageUrls = imageUrls.toList(),
                 definition = definition?.let { Definition(it.text, it.soundUrl) },
                 examples = examples.map { Definition(it.text, it.soundUrl) }
@@ -109,10 +109,10 @@ class DictionaryRepositoryImpl(private val dictionaryApi: DictionaryApi, private
                 transcription = transcription,
                 updatedAt = updatedAt,
                 mnemonics = mnemonics,
-                translation = MeaningDto.Translation(translation.text, translation.note),
+                translation = TranslationDto(translation.text, translation.note),
                 imageUrls = RealmList(*imageUrls.toTypedArray()),
-                definition = definition?.let { MeaningDto.Definition(it.text, it.soundUrl) },
-                examples = RealmList(*examples.map { MeaningDto.Definition(it.text, it.soundUrl) }.toTypedArray())
+                definition = definition?.let { DefinitionDto(it.text, it.soundUrl) },
+                examples = RealmList(*examples.map { DefinitionDto(it.text, it.soundUrl) }.toTypedArray())
             )
         }
 
