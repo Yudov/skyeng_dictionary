@@ -1,16 +1,24 @@
 package tk.skeptick.skyeng_dictionary.repositories
 
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.RealmList
+import tk.skeptick.skyeng_dictionary.database.models.DefinitionDto
 import tk.skeptick.skyeng_dictionary.database.models.MeaningDto
+import tk.skeptick.skyeng_dictionary.database.models.TranslationDto
 import tk.skeptick.skyeng_dictionary.domain.DictionaryRepository
 import tk.skeptick.skyeng_dictionary.domain.models.*
 import tk.skeptick.skyeng_dictionary.network.DictionaryApi
 import tk.skeptick.skyeng_dictionary.network.models.MeaningResponse
 import tk.skeptick.skyeng_dictionary.network.models.WordResponse
+import javax.inject.Inject
 
-class DictionaryRepositoryImpl(private val dictionaryApi: DictionaryApi, private val realm: Realm) : DictionaryRepository {
+class DictionaryRepositoryImpl @Inject constructor(
+    private val dictionaryApi: DictionaryApi,
+    private val realm: Realm
+    ) : DictionaryRepository {
 
     override fun hasCachedMeaning(meaningId: Int): Boolean =
         realm.where(MeaningDto::class.java)
@@ -20,6 +28,8 @@ class DictionaryRepositoryImpl(private val dictionaryApi: DictionaryApi, private
     override fun search(text: String, page: Int, pageSize: Int): Single<List<Word>> =
         dictionaryApi.search(text, page, pageSize)
             .map { words -> words.map(mapWordResponseToDomain) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
     override fun getMeaning(meaningId: Int): Single<Meaning> =
         realm.where(MeaningDto::class.java)
@@ -30,6 +40,8 @@ class DictionaryRepositoryImpl(private val dictionaryApi: DictionaryApi, private
             .firstOrError()
             .map { mapMeaningDtoToDomain(it)!! }
             .onErrorResumeNext { getMeaningFromNetwork(meaningId) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
     private fun getMeaningFromNetwork(meaningId: Int): Single<Meaning> =
         dictionaryApi.getMeanings(listOf(meaningId))
