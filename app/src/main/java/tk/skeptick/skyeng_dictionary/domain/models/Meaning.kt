@@ -9,7 +9,7 @@ data class Meaning(
     val text: String,
     val soundUrl: String?,
     val transcription: String?,
-    val updatedAt: String?,
+    val updatedAt: String,
     val mnemonics: String?,
     val translation: Translation,
     val imageUrls: List<String>,

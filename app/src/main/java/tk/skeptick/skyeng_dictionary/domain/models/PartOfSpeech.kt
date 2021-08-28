@@ -1,6 +1,6 @@
 package tk.skeptick.skyeng_dictionary.domain.models
 
-enum class PartOfSpeech(val value: String) {
+enum class PartOfSpeech(val code: String) {
     NOUN("n"),
     VERB("v"),
     ADJECTIVE("j"),
