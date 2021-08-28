@@ -1,6 +1,6 @@
 package tk.skeptick.skyeng_dictionary.network
 
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 import tk.skeptick.skyeng_dictionary.network.models.MeaningResponse
