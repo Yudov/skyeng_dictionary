@@ -4,34 +4,35 @@ import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
+import io.realm.annotations.Required
 
 open class MeaningDto(
-    @PrimaryKey var id: String? = null,
-    var wordId: Int? = null,
-    var difficultyLevel: Int? = null,
-    var partOfSpeechCode: String? = null,
+    @PrimaryKey var id: String = "",
+    @Required var wordId: Int = 0,
+    @Required var difficultyLevel: Int = 0,
+    @Required var partOfSpeechCode: String = "",
     var prefix: String? = null,
-    var text: String? = null,
+    @Required var text: String = "",
     var soundUrl: String? = null,
     var transcription: String? = null,
-    var updatedAt: String? = null,
+    @Required var updatedAt: String = "",
     var mnemonics: String? = null,
-    var translation: RealmList<Translation> = RealmList(),
-    var images: RealmList<String> = RealmList(),
+    @Required var translation: Translation = Translation(),
+    var imageUrls: RealmList<String> = RealmList(),
     var definition: Definition? = null,
     var examples: RealmList<Definition> = RealmList()
 ) : RealmObject() {
 
     @RealmClass(embedded = true)
     open class Translation(
-        var text: String? = null,
+        @Required var text: String = "",
         var note: String? = null
     ) : RealmObject()
 
     @RealmClass(embedded = true)
     open class Definition(
-        var text: String? = null,
-        var soundUrl: String? = null
+        @Required var text: String = "",
+        @Required var soundUrl: String = ""
     ) : RealmObject()
 
 }
