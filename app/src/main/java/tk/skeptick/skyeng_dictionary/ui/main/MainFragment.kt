@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -22,6 +23,7 @@ import tk.skeptick.skyeng_dictionary.databinding.*
 import tk.skeptick.skyeng_dictionary.extensions.BottomRoundedMaterialShape
 import tk.skeptick.skyeng_dictionary.extensions.addOnScrollToBottomListener
 import tk.skeptick.skyeng_dictionary.extensions.color
+import tk.skeptick.skyeng_dictionary.ui.meaning.MeaningFragment
 import java.lang.IllegalStateException
 import javax.inject.Inject
 import javax.inject.Provider
@@ -102,6 +104,19 @@ class MainFragment : MvpAppCompatFragment(R.layout.fragment_main), MainView {
         binding.recyclerView.isVisible = false
     }
 
+    override fun navigateToMeaning(id: Int) {
+        parentFragmentManager.commit {
+            addToBackStack(null)
+            setCustomAnimations(
+                R.anim.material_right_slide_in,
+                R.anim.material_left_slide_out,
+                R.anim.material_left_slide_in,
+                R.anim.material_right_slide_out
+            )
+            replace(R.id.fragment_container, MeaningFragment.newInstance(id))
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -122,8 +137,8 @@ class MainFragment : MvpAppCompatFragment(R.layout.fragment_main), MainView {
     }
 
     class MeaningItemViewHolder(private val binding: ItemMeaningBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: WordItemViewModel.Meaning) {
-            binding.root.setOnClickListener {  }
+        fun bind(item: WordItemViewModel.Meaning, itemClickListener: (WordItemViewModel.Meaning) -> Unit) {
+            binding.root.setOnClickListener { itemClickListener(item) }
             binding.wordTextView.text = item.translation
             binding.partOfSpeechColorView.setBackgroundColor(item.partOfSpeech.color)
             binding.root.shapeAppearanceModel = when (item.isLast) {
@@ -156,8 +171,8 @@ class MainFragment : MvpAppCompatFragment(R.layout.fragment_main), MainView {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             when (val item = currentList[position]) {
                 is WordItemViewModel.Word -> (holder as WordItemViewHolder).bind(item)
-                is WordItemViewModel.Meaning -> (holder as MeaningItemViewHolder).bind(item)
-                is WordItemViewModel.Error -> (holder as ErrorItemViewHolder).bind(presenter::onListBottomReached)
+                is WordItemViewModel.Meaning -> (holder as MeaningItemViewHolder).bind(item, presenter::onMeaningClick)
+                is WordItemViewModel.Error -> (holder as ErrorItemViewHolder).bind(presenter::onReloadClicked)
                 is WordItemViewModel.Progress -> return
             }
         }

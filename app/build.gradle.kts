@@ -60,6 +60,7 @@ dependencies {
     implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
+    implementation("io.coil-kt:coil:1.3.2")
 
     implementation("com.github.moxy-community:moxy:$moxyVersion")
     implementation("com.github.moxy-community:moxy-androidx:$moxyVersion")

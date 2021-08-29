@@ -25,16 +25,28 @@ class MainPresenter @Inject constructor(
 
         searchDisposable = dictionaryRepository
             .search(text, 0, PAGE_SIZE)
-            .subscribe({ handleLoadingSuccess(text, it) }, { handleLoadingError(it) })
+            .subscribe({ handleLoadingSuccess(text, it) }, ::handleLoadingError)
     }
 
     fun onListBottomReached() {
         if (searchDisposable?.isDisposed == false || !canLoadMore) return
-        viewState.showItems(items + WordItemViewModel.Progress)
+        loadMore()
+    }
 
+    fun onReloadClicked() {
+        if (searchDisposable?.isDisposed == false) return
+        loadMore()
+    }
+
+    fun onMeaningClick(item: WordItemViewModel.Meaning) {
+        viewState.navigateToMeaning(item.id)
+    }
+
+    private fun loadMore() {
+        viewState.showItems(items + WordItemViewModel.Progress)
         searchDisposable = dictionaryRepository
             .search(searchText, loadingOffset / PAGE_SIZE, PAGE_SIZE)
-            .subscribe({ handleAddLoadingSuccess(it) }, { viewState.showItems(items + WordItemViewModel.Error) })
+            .subscribe(::handleAddLoadingSuccess, ::handleAddLoadingError)
     }
 
     private fun handleLoadingSuccess(text: String, words: List<Word>) {
@@ -60,6 +72,11 @@ class MainPresenter @Inject constructor(
         canLoadMore = words.size == PAGE_SIZE
         items = items + words.flatMap(mapWordToItems)
         viewState.showItems(items)
+    }
+
+    private fun handleAddLoadingError(throwable: Throwable) {
+        canLoadMore = false
+        viewState.showItems(items + WordItemViewModel.Error)
     }
 
     override fun onDestroy() {
