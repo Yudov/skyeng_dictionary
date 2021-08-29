@@ -16,12 +16,14 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    private val json = Json { ignoreUnknownKeys = true }
+
     @Provides
     @Singleton
     fun provideRetrofitClient(): Retrofit =
         Retrofit.Builder()
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(Json.asConverterFactory(MediaType.parse("application/json")!!))
+            .addConverterFactory(json.asConverterFactory(MediaType.parse("application/json")!!))
             .baseUrl("https://dictionary.skyeng.ru/api/public/")
             .build()
 
