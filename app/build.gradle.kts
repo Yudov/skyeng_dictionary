@@ -45,11 +45,13 @@ android {
 dependencies {
     val daggerVersion = "2.38.1"
     val retrofitVersion = "2.9.0"
+    val moxyVersion = "2.2.2"
 
     implementation("androidx.core:core-ktx:1.6.0")
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.0")
+    implementation("androidx.fragment:fragment-ktx:1.3.6")
 
     implementation("com.google.dagger:hilt-android:$daggerVersion")
     kapt("com.google.dagger:hilt-android-compiler:$daggerVersion")
@@ -58,6 +60,11 @@ dependencies {
     implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
+
+    implementation("com.github.moxy-community:moxy:$moxyVersion")
+    implementation("com.github.moxy-community:moxy-androidx:$moxyVersion")
+    implementation("com.github.moxy-community:moxy-ktx:$moxyVersion")
+    kapt("com.github.moxy-community:moxy-compiler:$moxyVersion")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
