@@ -3,7 +3,7 @@ package tk.skeptick.skyeng_dictionary.domain.models
 data class Meaning(
     val id: String,
     val wordId: Int,
-    val difficultyLevel: Int,
+    val difficultyLevel: Int?,
     val partOfSpeech: PartOfSpeech,
     val prefix: String?,
     val text: String,

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class MeaningResponse(
     @SerialName("id") val id: String,
     @SerialName("wordId") val wordId: Int,
-    @SerialName("difficultyLevel") val difficultyLevel: Int,
+    @SerialName("difficultyLevel") val difficultyLevel: Int? = null,
     @SerialName("partOfSpeechCode") val partOfSpeechCode: String,
     @SerialName("prefix") val prefix: String? = null,
     @SerialName("text") val text: String,

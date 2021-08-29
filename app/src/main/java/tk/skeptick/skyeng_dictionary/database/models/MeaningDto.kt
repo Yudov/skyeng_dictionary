@@ -8,7 +8,7 @@ import io.realm.annotations.Required
 open class MeaningDto(
     @PrimaryKey var id: String = "",
     var wordId: Int = 0,
-    var difficultyLevel: Int = 0,
+    var difficultyLevel: Int? = null,
     @Required var partOfSpeechCode: String = "",
     var prefix: String? = null,
     @Required var text: String = "",
