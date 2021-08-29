@@ -16,38 +16,38 @@ import tk.skeptick.skyeng_dictionary.network.models.WordResponse
 import javax.inject.Inject
 
 class DictionaryRepositoryImpl @Inject constructor(
-    private val dictionaryApi: DictionaryApi,
-    private val realm: Realm
-    ) : DictionaryRepository {
+    private val dictionaryApi: DictionaryApi
+) : DictionaryRepository {
 
     override fun hasCachedMeaning(meaningId: Int): Boolean =
-        realm.where(MeaningDto::class.java)
-            .containsValue("id", meaningId)
+        Realm.getDefaultInstance()
+            .where(MeaningDto::class.java)
+            .containsValue("id", meaningId.toString())
             .count() == 1L
 
     override fun search(text: String, page: Int, pageSize: Int): Single<List<Word>> =
         dictionaryApi.search(text, page, pageSize)
-            .map { words -> words.map(mapWordResponseToDomain) }
+            .map { it.map(mapWordResponseToDomain) }
+            .map { if (it.isEmpty()) throw NoSuchElementException() else it }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
     override fun getMeaning(meaningId: Int): Single<Meaning> =
-        realm.where(MeaningDto::class.java)
-            .equalTo("id", meaningId)
+        Realm.getDefaultInstance()
+            .where(MeaningDto::class.java)
+            .equalTo("id", meaningId.toString())
             .findFirstAsync()
             .asFlowable<MeaningDto>()
-            .filter { it.isLoaded && it.isValid }
             .firstOrError()
             .map { mapMeaningDtoToDomain(it)!! }
             .onErrorResumeNext { getMeaningFromNetwork(meaningId) }
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
     private fun getMeaningFromNetwork(meaningId: Int): Single<Meaning> =
         dictionaryApi.getMeanings(listOf(meaningId))
+            .subscribeOn(Schedulers.io())
             .map { it.firstOrNull()?.let(mapMeaningResponseToDomain) ?: throw NoSuchElementException() }
-            .doOnSuccess { realm.insert(mapMeaningDomainToDto(it)) }
-
+            .doOnSuccess { value -> Realm.getDefaultInstance().executeTransaction { it.insert(mapMeaningDomainToDto(value)) } }
 
     private companion object {
 
